@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class Player : Character
 {
+	private PlayerInput inputActions;
 	private static Player instance;
 	public static Player Instance
 	{
@@ -20,6 +21,22 @@ public class Player : Character
 	// Start is called before the first frame update
 	[SerializeField] private Tilemap tilemap;
     private Vector3 min, max;
+
+	private void Awake()
+	{
+		inputActions = new PlayerInput();
+	}
+
+	private void OnEnable()
+	{
+		inputActions.Enable();
+	}
+
+	private void OnDisable()
+	{
+		inputActions.Disable();
+	}
+
 	protected override void Start()
     {
         Vector3 mintile = tilemap.CellToWorld(tilemap.cellBounds.min);
@@ -45,21 +62,10 @@ public class Player : Character
 	private void GetInput()
 	{
 		Direction = Vector2.zero;
-		if (Input.GetKey(KeyBindManager.MyInstance.Keybinds["UP"]))
+		Vector2 moveInput = inputActions.Ground.Move.ReadValue<Vector2>();
+		if (moveInput != Vector2.zero)
 		{
-			Direction += Vector2.up;
-		}
-		if (Input.GetKey(KeyBindManager.MyInstance.Keybinds["DOWN"]))
-		{
-			Direction += Vector2.down;
-		}
-		if (Input.GetKey(KeyBindManager.MyInstance.Keybinds["LEFT"]))
-		{
-			Direction += Vector2.left;
-		}
-		if (Input.GetKey(KeyBindManager.MyInstance.Keybinds["RIGHT"]))
-		{
-			Direction += Vector2.right;
+			Direction += moveInput;
 		}
 	}
 }
